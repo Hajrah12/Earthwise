@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EarthWise Tools - Greener Backyards</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f3f4f1;
+      color: #333;
+    }
+    header {
+      background-color: #2e7d32;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 {
+      margin: 0;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+      margin: 0;
+      padding: 0;
+    }
+    nav ul li {
+      cursor: pointer;
+    }
+    .tools-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      padding: 2rem;
+    }
+    .tool-card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+      transition: transform 0.3s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .tool-card:hover {
+      transform: scale(1.02);
+    }
+    .tool-card img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .tool-card button {
+      margin-top: 1rem;
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .checkout-form {
+      background-color: #fff;
+      padding: 2rem;
+      margin: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .checkout-form input, .checkout-form select {
+      width: 100%;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .checkout-form button {
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      padding: 1rem;
+      width: 100%;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    footer {
+      background-color: #1b5e20;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+    }
+    #cart-total {
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin: 0 2rem;
+    }
+  </style>
+</head>
+  <link rel="manifest" href="manifest.json">
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(reg => console.log('Service Worker registered ✔️'))
+      .catch(err => console.error('Service Worker failed ❌', err));
+  }
+</script>
+<body>
+  <header>
+    <h1>EarthWise Tools</h1>
+    <nav>
+      <ul>
+        <li>Shop</li>
+        <li>Learn</li>
+        <li>Blog</li>
+        <li>Contact</li>
+      </ul>
+    </nav>
+    <div id="cart-total">Cart Total: $<span id="cart-amount">0</span></div>
+  </header>
+
+  <section class="tools-section">
+    <div class="tool-card">
+      <img src="https://via.placeholder.com/300x200" alt="Compost Kit">
+      <h3>Compost Crusader Kit</h3>
+      <p>$40 - Turn waste into rich soil. Perfect for any garden.</p>
+      <button onclick="addToCart('Compost Crusader Kit', 40)">Add to Cart</button>
+    </div>
+    <div class="tool-card">
+      <img src="https://via.placeholder.com/300x200" alt="Rainwater Collector">
+      <h3>Rainwater Harvest Hero</h3>
+      <p>$55 - Conserve water and nourish your garden smartly.</p>
+      <button onclick="addToCart('Rainwater Harvest Hero', 55)">Add to Cart</button>
+    </div>
+    <div class="tool-card">
+      <img src="https://via.placeholder.com/300x200" alt="Pollinator Kit">
+      <h3>Pollinator Power Tools</h3>
+      <p>$30 - Support bees, butterflies, and biodiversity.</p>
+      <button onclick="addToCart('Pollinator Power Tools', 30)">Add to Cart</button>
+    </div>
+    <div class="tool-card">
+      <img src="https://via.placeholder.com/300x200" alt="Soil Tester">
+      <h3>Backyard Soil Tester</h3>
+      <p>$25 - Know your ground before you grow your food.</p>
+      <button onclick="addToCart('Backyard Soil Tester', 25)">Add to Cart</button>
+    </div>
+  </section>
+
+  <section class="checkout-form">
+    <h2>Complete Your Purchase</h2>
+    <form id="checkoutForm">
+      <input type="text" placeholder="Full Name" required>
+      <input type="text" placeholder="City" required>
+      <input type="text" placeholder="Address" required>
+      <input type="tel" placeholder="Phone Number" required>
+      <input type="text" id="selectedItems" placeholder="Selected Products" readonly required>
+      <input type="number" id="totalPrice" placeholder="Total Price ($)" readonly required>
+      <select required>
+        <option value="">Select Shipping Option</option>
+        <option value="standard">Standard - 5 days</option>
+        <option value="express">Express - 2 days</option>
+      </select>
+      <button type="submit">Place Order</button>
+    </form>
+  </section>
+
+  <footer>
+    &copy; 2025 EarthWise Tools | Greener Backyards, Smarter Earth
+  </footer>
+
+  <script>
+    let cart = [];
+    let total = 0;
+
+    function addToCart(name, price) {
+      cart.push(name);
+      total += price;
+      document.getElementById('cart-amount').textContent = total;
+      document.getElementById('selectedItems').value = cart.join(', ');
+      document.getElementById('totalPrice').value = total;
+    }
+
+    document.getElementById('checkoutForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      window.location.href = "order-confirmation.html";
+    });
+  </script>
+</body>
+</html>
